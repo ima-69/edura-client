@@ -1,11 +1,18 @@
 import React from 'react';
 import { Card } from '../ui';
+import { useAppDispatch } from '../../store/hooks';
+import { setCurrentPage } from '../../store/slices/uiSlice';
 
 interface RegisterSelectorProps {
   onSelectUserType: (type: 'student' | 'teacher' | 'admin') => void;
 }
 
 export const RegisterSelector: React.FC<RegisterSelectorProps> = ({ onSelectUserType }) => {
+  const dispatch = useAppDispatch();
+
+  const handleBack = () => {
+    dispatch(setCurrentPage('home'));
+  };
   const userTypes = [
     {
       type: 'student' as const,
@@ -54,6 +61,17 @@ export const RegisterSelector: React.FC<RegisterSelectorProps> = ({ onSelectUser
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl w-full">
+        {/* Back Button */}
+        <button
+          onClick={handleBack}
+          className="flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+        >
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          <span className="font-medium">Back to Home</span>
+        </button>
+
         <div className="text-center mb-12">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">

@@ -23,6 +23,24 @@ export const Navbar: React.FC<NavbarProps> = ({ onGetStarted }) => {
     dispatch(setCurrentPage('login'));
   };
 
+  const handleProfileClick = () => {
+    console.log('Profile clicked, user role:', user?.role);
+    
+    if (user?.role === 'teacher') {
+      console.log('Dispatching teacher-profile page');
+      dispatch(setCurrentPage('teacher-profile'));
+    } else if (user?.role === 'student') {
+      console.log('Dispatching student-profile page');
+      dispatch(setCurrentPage('student-profile'));
+    } else if (user?.role === 'admin' || user?.role === 'superadmin') {
+      console.log('Dispatching admin-profile page');
+      dispatch(setCurrentPage('admin-profile'));
+    }
+    
+    setIsUserMenuOpen(false);
+    setIsMenuOpen(false); // Also close mobile menu
+  };
+
   const getRoleConfig = (role: string) => {
     switch (role) {
       case 'student':
@@ -117,9 +135,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onGetStarted }) => {
                       onClick={() => setIsUserMenuOpen(false)}
                     />
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                      <button 
+                        onClick={handleProfileClick}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
                         My Profile
-                      </a>
+                      </button>
                       <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                         My Courses
                       </a>
@@ -202,9 +223,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onGetStarted }) => {
                       </span>
                     </div>
                   </div>
-                  <a href="#" className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                  <button 
+                    onClick={handleProfileClick}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  >
                     My Profile
-                  </a>
+                  </button>
                   <a href="#" className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
                     My Courses
                   </a>

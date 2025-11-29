@@ -9,21 +9,47 @@ import { StudentRegister } from './pages/auth/StudentRegister';
 import { TeacherRegister } from './components/auth/TeacherRegister';
 import { AdminRegister } from './components/auth/AdminRegister';
 import { Login } from './pages/auth/Login';
+import { TeacherProfile } from './pages/teacher/TeacherProfile';
+import { StudentProfile } from './pages/student/StudentProfile';
+import { AdminProfile } from './pages/admin/AdminProfile';
 import { useAppDispatch, useAppSelector } from './store/hooks';
-import { setCurrentPage } from './store/slices/uiSlice';
+import { setCurrentPage, goBack, type Page } from './store/slices/uiSlice';
 import { useEffect } from 'react';
 
 function App() {
   const dispatch = useAppDispatch();
   const currentPage = useAppSelector((state) => state.ui.currentPage);
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user: currentUser } = useAppSelector((state) => state.auth);
 
-  // Check authentication on mount and redirect to home if logged in
+  // Handle browser back/forward buttons
   useEffect(() => {
-    if (isAuthenticated && currentPage !== 'home') {
-      dispatch(setCurrentPage('home'));
-    }
-  }, [isAuthenticated, currentPage, dispatch]);
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state?.page) {
+        dispatch(goBack());
+      } else {
+        // If no state, determine page from URL
+        const path = window.location.pathname;
+        let page: Page = 'home';
+        
+        if (path === '/login') page = 'login';
+        else if (path === '/register-select') page = 'register-select';
+        else if (path === '/student-register') page = 'student-register';
+        else if (path === '/teacher-register') page = 'teacher-register';
+        else if (path === '/admin-register') page = 'admin-register';
+        else if (path === '/teacher-profile') page = 'teacher-profile';
+        else if (path === '/student-profile') page = 'student-profile';
+        else if (path === '/admin-profile') page = 'admin-profile';
+        
+        dispatch(setCurrentPage(page));
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [dispatch]);
 
   const handleGetStarted = () => {
     dispatch(setCurrentPage('register-select'));
@@ -159,6 +185,90 @@ function App() {
             onSwitchToLogin={handleSwitchToLogin}
           />
         );
+      
+      case 'teacher-profile':
+        if (!isAuthenticated) {
+          // If not authenticated, redirect to login
+          return (
+            <Login 
+              onSuccess={handleLoginSuccess}
+              onSwitchToRegister={handleSwitchToRegister}
+            />
+          );
+        }
+        // Role-based access control
+        if (isAuthenticated && currentUser?.role !== 'teacher') {
+          // If not a teacher, redirect to home
+          return (
+            <>
+              <Navbar onGetStarted={handleGetStarted} />
+              <main>
+                <Hero onGetStarted={handleGetStarted} />
+                <Features />
+                <PopularCourses />
+                <CTA onGetStarted={handleGetStarted} />
+              </main>
+              <Footer />
+            </>
+          );
+        }
+        return <TeacherProfile />;
+      
+      case 'student-profile':
+        if (!isAuthenticated) {
+          // If not authenticated, redirect to login
+          return (
+            <Login 
+              onSuccess={handleLoginSuccess}
+              onSwitchToRegister={handleSwitchToRegister}
+            />
+          );
+        }
+        // Role-based access control
+        if (isAuthenticated && currentUser?.role !== 'student') {
+          // If not a student, redirect to home
+          return (
+            <>
+              <Navbar onGetStarted={handleGetStarted} />
+              <main>
+                <Hero onGetStarted={handleGetStarted} />
+                <Features />
+                <PopularCourses />
+                <CTA onGetStarted={handleGetStarted} />
+              </main>
+              <Footer />
+            </>
+          );
+        }
+        return <StudentProfile />;
+      
+      case 'admin-profile':
+        if (!isAuthenticated) {
+          // If not authenticated, redirect to login
+          return (
+            <Login 
+              onSuccess={handleLoginSuccess}
+              onSwitchToRegister={handleSwitchToRegister}
+            />
+          );
+        }
+        // Role-based access control
+        if (isAuthenticated && currentUser?.role !== 'admin' && currentUser?.role !== 'superadmin') {
+          // If not an admin, redirect to home
+          return (
+            <>
+              <Navbar onGetStarted={handleGetStarted} />
+              <main>
+                <Hero onGetStarted={handleGetStarted} />
+                <Features />
+                <PopularCourses />
+                <CTA onGetStarted={handleGetStarted} />
+              </main>
+              <Footer />
+            </>
+          );
+        }
+        return <AdminProfile />;
       
       case 'home':
       default:
