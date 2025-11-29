@@ -1,8 +1,8 @@
-import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { ENV } from './env';
 
 // Create axios instance
-const api: AxiosInstance = axios.create({
+const api = axios.create({
   baseURL: ENV.API_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ const api: AxiosInstance = axios.create({
 
 // Request interceptor
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
+  (config) => {
     // Get token from localStorage
     const token = localStorage.getItem('token');
     
@@ -22,7 +22,7 @@ api.interceptors.request.use(
     
     return config;
   },
-  (error: AxiosError) => {
+  (error) => {
     return Promise.reject(error);
   }
 );
@@ -30,7 +30,7 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  (error) => {
     if (error.response?.status === 401) {
       // Token expired or invalid
       localStorage.removeItem('token');

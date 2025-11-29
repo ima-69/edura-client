@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Card } from '../ui';
+import { Input, Button, Card } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { registerStudent, clearError } from '../../store/slices/authSlice';
-import { RegisterData } from '../../types/user.types';
+import type { RegisterData } from '../../types/user.types';
 
 interface FormData extends RegisterData {
   confirmPassword: string;

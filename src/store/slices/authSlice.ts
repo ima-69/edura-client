@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import api from '../../config/api';
-import { AuthState, RegisterData, LoginData, AuthResponse, User, UserRole } from '../../types/user.types';
+import type { AuthState, RegisterData, LoginData, User, UserRole } from '../../types/user.types';
 
 // Initial state
 const initialState: AuthState = {
@@ -20,7 +20,7 @@ export const registerStudent = createAsyncThunk<
   'auth/registerStudent',
   async (data, { rejectWithValue }) => {
     try {
-      const response = await api.post<AuthResponse>('/auth/register/student', data);
+      const response = await api.post('/auth/register/student', data);
       const user = { ...response.data.data.student!, role: 'student' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
@@ -37,7 +37,7 @@ export const registerTeacher = createAsyncThunk<
   'auth/registerTeacher',
   async (data, { rejectWithValue }) => {
     try {
-      const response = await api.post<AuthResponse>('/auth/register/teacher', data);
+      const response = await api.post('/auth/register/teacher', data);
       const user = { ...response.data.data.teacher!, role: 'teacher' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
@@ -54,7 +54,7 @@ export const registerAdmin = createAsyncThunk<
   'auth/registerAdmin',
   async (data, { rejectWithValue }) => {
     try {
-      const response = await api.post<AuthResponse>('/auth/register/admin', data);
+      const response = await api.post('/auth/register/admin', data);
       const user = { ...response.data.data.admin!, role: 'admin' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
@@ -71,7 +71,7 @@ export const loginStudent = createAsyncThunk<
   'auth/loginStudent',
   async (data, { rejectWithValue }) => {
     try {
-      const response = await api.post<AuthResponse>('/auth/login', data);
+      const response = await api.post('/auth/login', data);
       const user = { ...response.data.data.student!, role: 'student' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
@@ -88,7 +88,7 @@ export const loginTeacher = createAsyncThunk<
   'auth/loginTeacher',
   async (data, { rejectWithValue }) => {
     try {
-      const response = await api.post<AuthResponse>('/auth/login/teacher', data);
+      const response = await api.post('/auth/login/teacher', data);
       const user = { ...response.data.data.teacher!, role: 'teacher' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
@@ -105,7 +105,7 @@ export const loginAdmin = createAsyncThunk<
   'auth/loginAdmin',
   async (data, { rejectWithValue }) => {
     try {
-      const response = await api.post<AuthResponse>('/auth/login/admin', data);
+      const response = await api.post('/auth/login/admin', data);
       const user = { ...response.data.data.admin!, role: 'admin' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
