@@ -63,6 +63,23 @@ export const registerAdmin = createAsyncThunk<
   }
 );
 
+export const login = createAsyncThunk<
+  { user: User; token: string },
+  LoginData,
+  { rejectValue: string }
+>(
+  'auth/login',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/auth/login', data);
+      const user = { ...response.data.data };
+      return { user, token: response.data.token };
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Login failed');
+    }
+  }
+);
+
 export const loginStudent = createAsyncThunk<
   { user: User; token: string },
   LoginData,
@@ -195,6 +212,25 @@ const authSlice = createSlice({
       .addCase(registerAdmin.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || 'Registration failed';
+      });
+
+    // Universal Login (auto-detect user type)
+    builder
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.isAuthenticated = true;
+        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('user', JSON.stringify(action.payload.user));
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || 'Login failed';
       });
 
     // Login Student

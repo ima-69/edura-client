@@ -14,12 +14,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onGetStarted }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log('Navbar - Auth Status:', isAuthenticated);
-    console.log('Navbar - User:', user);
-  }, [isAuthenticated, user]);
-
   const handleLogout = () => {
     dispatch(logout());
     setIsUserMenuOpen(false);

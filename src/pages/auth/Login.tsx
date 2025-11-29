@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Card } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { loginStudent, loginTeacher, loginAdmin, clearError } from '../../store/slices/authSlice';
+import { login, clearError } from '../../store/slices/authSlice';
 import type { LoginData } from '../../types/user.types';
 
 interface LoginProps {
@@ -13,7 +13,6 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToRegister }) =
   const dispatch = useAppDispatch();
   const { isLoading, error } = useAppSelector((state) => state.auth);
 
-  const [userType, setUserType] = useState<'student' | 'teacher' | 'admin'>('student');
   const [formData, setFormData] = useState<LoginData>({
     email: '',
     password: '',
@@ -59,18 +58,7 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToRegister }) =
       return;
     }
 
-    let result;
-    switch (userType) {
-      case 'student':
-        result = await dispatch(loginStudent(formData));
-        break;
-      case 'teacher':
-        result = await dispatch(loginTeacher(formData));
-        break;
-      case 'admin':
-        result = await dispatch(loginAdmin(formData));
-        break;
-    }
+    const result = await dispatch(login(formData));
 
     if (result && 'error' in result) {
       // Login failed - error is already in Redux state
@@ -82,67 +70,19 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToRegister }) =
     }
   };
 
-  const userTypeConfig = {
-    student: {
-      color: 'blue',
-      icon: (
-        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-      ),
-    },
-    teacher: {
-      color: 'purple',
-      icon: (
-        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-        </svg>
-      ),
-    },
-    admin: {
-      color: 'gray',
-      icon: (
-        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-      ),
-    },
-  };
-
-  const currentConfig = userTypeConfig[userType];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md p-8">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className={`w-16 h-16 bg-${currentConfig.color}-600 rounded-full flex items-center justify-center`}>
-              {currentConfig.icon}
+            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             </div>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
           <p className="text-gray-600">Sign in to continue to Edura</p>
-        </div>
-
-        {/* User Type Selector */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Login as</label>
-          <div className="grid grid-cols-3 gap-2">
-            {(['student', 'teacher', 'admin'] as const).map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => setUserType(type)}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                  userType === type
-                    ? `bg-${userTypeConfig[type].color}-600 text-white shadow-md`
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {type.charAt(0).toUpperCase() + type.slice(1)}
-              </button>
-            ))}
-          </div>
         </div>
 
         {error && (

@@ -119,7 +119,7 @@ export const StudentRegister: React.FC<StudentRegisterProps> = ({
     try {
       const { confirmPassword, ...registrationData } = formData;
       
-      const response = await fetch('http://localhost:4000/api/auth/student/register', {
+      const response = await fetch('http://localhost:4000/api/auth/register/student', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

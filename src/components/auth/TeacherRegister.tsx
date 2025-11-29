@@ -111,7 +111,7 @@ export const TeacherRegister: React.FC<TeacherRegisterProps> = ({
     try {
       const { confirmPassword, ...registrationData } = formData;
       
-      const response = await fetch('http://localhost:4000/api/auth/teacher/register', {
+      const response = await fetch('http://localhost:4000/api/auth/register/teacher', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -111,7 +111,7 @@ export const AdminRegister: React.FC<AdminRegisterProps> = ({
     try {
       const { confirmPassword, ...registrationData } = formData;
       
-      const response = await fetch('http://localhost:4000/api/auth/admin/register', {
+      const response = await fetch('http://localhost:4000/api/auth/register/admin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
