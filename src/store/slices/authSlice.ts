@@ -21,7 +21,7 @@ export const registerStudent = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/register/student', data);
-      const user = { ...response.data.data.student!, role: 'student' as UserRole };
+      const user = { ...response.data.data, role: 'student' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Registration failed');
@@ -38,7 +38,7 @@ export const registerTeacher = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/register/teacher', data);
-      const user = { ...response.data.data.teacher!, role: 'teacher' as UserRole };
+      const user = { ...response.data.data, role: 'teacher' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Registration failed');
@@ -55,7 +55,7 @@ export const registerAdmin = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/register/admin', data);
-      const user = { ...response.data.data.admin!, role: 'admin' as UserRole };
+      const user = { ...response.data.data, role: 'admin' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Registration failed');
@@ -72,7 +72,7 @@ export const loginStudent = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login', data);
-      const user = { ...response.data.data.student!, role: 'student' as UserRole };
+      const user = { ...response.data.data, role: 'student' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
@@ -89,7 +89,7 @@ export const loginTeacher = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login/teacher', data);
-      const user = { ...response.data.data.teacher!, role: 'teacher' as UserRole };
+      const user = { ...response.data.data, role: 'teacher' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
@@ -106,7 +106,7 @@ export const loginAdmin = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login/admin', data);
-      const user = { ...response.data.data.admin!, role: 'admin' as UserRole };
+      const user = { ...response.data.data, role: 'admin' as UserRole };
       return { user, token: response.data.token };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');

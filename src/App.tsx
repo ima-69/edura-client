@@ -8,6 +8,7 @@ import { RegisterSelector } from './components/auth/RegisterSelector';
 import { StudentRegister } from './pages/auth/StudentRegister';
 import { TeacherRegister } from './components/auth/TeacherRegister';
 import { AdminRegister } from './components/auth/AdminRegister';
+import { Login } from './pages/auth/Login';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { setCurrentPage } from './store/slices/uiSlice';
 import { useEffect } from 'react';
@@ -15,9 +16,9 @@ import { useEffect } from 'react';
 function App() {
   const dispatch = useAppDispatch();
   const currentPage = useAppSelector((state) => state.ui.currentPage);
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
-  // Redirect to home if authenticated
+  // Check authentication on mount and redirect to home if logged in
   useEffect(() => {
     if (isAuthenticated && currentPage !== 'home') {
       dispatch(setCurrentPage('home'));
@@ -33,19 +34,81 @@ function App() {
   };
 
   const handleRegistrationSuccess = () => {
+    // After successful registration, redirect to login
+    dispatch(setCurrentPage('login'));
+  };
+
+  const handleLoginSuccess = () => {
+    // After successful login, redirect to home
     dispatch(setCurrentPage('home'));
   };
 
   const handleSwitchToLogin = () => {
-    dispatch(setCurrentPage('home'));
+    dispatch(setCurrentPage('login'));
+  };
+
+  const handleSwitchToRegister = () => {
+    dispatch(setCurrentPage('register-select'));
   };
 
   const renderPage = () => {
     switch (currentPage) {
+      case 'login':
+        if (isAuthenticated) {
+          // If already logged in, show home page
+          return (
+            <>
+              <Navbar onGetStarted={handleGetStarted} />
+              <main>
+                <Hero onGetStarted={handleGetStarted} />
+                <Features />
+                <PopularCourses />
+                <CTA onGetStarted={handleGetStarted} />
+              </main>
+              <Footer />
+            </>
+          );
+        }
+        return (
+          <Login 
+            onSuccess={handleLoginSuccess}
+            onSwitchToRegister={handleSwitchToRegister}
+          />
+        );
+      
       case 'register-select':
+        if (isAuthenticated) {
+          // If already logged in, show home page
+          return (
+            <>
+              <Navbar onGetStarted={handleGetStarted} />
+              <main>
+                <Hero onGetStarted={handleGetStarted} />
+                <Features />
+                <PopularCourses />
+                <CTA onGetStarted={handleGetStarted} />
+              </main>
+              <Footer />
+            </>
+          );
+        }
         return <RegisterSelector onSelectUserType={handleSelectUserType} />;
       
       case 'student-register':
+        if (isAuthenticated) {
+          return (
+            <>
+              <Navbar onGetStarted={handleGetStarted} />
+              <main>
+                <Hero onGetStarted={handleGetStarted} />
+                <Features />
+                <PopularCourses />
+                <CTA onGetStarted={handleGetStarted} />
+              </main>
+              <Footer />
+            </>
+          );
+        }
         return (
           <StudentRegister 
             onSuccess={handleRegistrationSuccess}
@@ -54,6 +117,20 @@ function App() {
         );
       
       case 'teacher-register':
+        if (isAuthenticated) {
+          return (
+            <>
+              <Navbar onGetStarted={handleGetStarted} />
+              <main>
+                <Hero onGetStarted={handleGetStarted} />
+                <Features />
+                <PopularCourses />
+                <CTA onGetStarted={handleGetStarted} />
+              </main>
+              <Footer />
+            </>
+          );
+        }
         return (
           <TeacherRegister 
             onSuccess={handleRegistrationSuccess}
@@ -62,6 +139,20 @@ function App() {
         );
       
       case 'admin-register':
+        if (isAuthenticated) {
+          return (
+            <>
+              <Navbar onGetStarted={handleGetStarted} />
+              <main>
+                <Hero onGetStarted={handleGetStarted} />
+                <Features />
+                <PopularCourses />
+                <CTA onGetStarted={handleGetStarted} />
+              </main>
+              <Footer />
+            </>
+          );
+        }
         return (
           <AdminRegister 
             onSuccess={handleRegistrationSuccess}
@@ -71,6 +162,8 @@ function App() {
       
       case 'home':
       default:
+        // Same home page for both logged in and logged out users
+        // Only the navbar changes
         return (
           <>
             <Navbar onGetStarted={handleGetStarted} />
@@ -89,16 +182,6 @@ function App() {
   return (
     <div className="min-h-screen bg-white">
       {renderPage()}
-      
-      {/* User info debug panel (remove in production) */}
-      {isAuthenticated && user && (
-        <div className="fixed bottom-4 left-4 bg-white shadow-2xl rounded-lg p-4 border border-gray-200 z-50 max-w-xs">
-          <p className="text-sm font-semibold text-gray-700 mb-2">Logged in as:</p>
-          <p className="text-xs text-gray-600">{user.first_name} {user.last_name}</p>
-          <p className="text-xs text-gray-500">{user.email}</p>
-          <p className="text-xs text-blue-600 font-semibold mt-1">Role: {user.role}</p>
-        </div>
-      )}
     </div>
   );
 }

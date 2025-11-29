@@ -162,3 +162,4 @@ export const PopularCourses: React.FC = () => {
   );
 };
 
+

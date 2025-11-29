@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Card } from '../../components/ui';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { registerStudent, clearError } from '../../store/slices/authSlice';
+import { registerStudent, clearError, logout } from '../../store/slices/authSlice';
 import type { RegisterData } from '../../types/user.types';
 
 interface FormData extends RegisterData {
@@ -113,7 +113,22 @@ export const StudentRegister: React.FC<StudentRegisterProps> = ({
     const result = await dispatch(registerStudent(registrationData));
     
     if (registerStudent.fulfilled.match(result)) {
-      setSuccessMessage('Registration successful! Redirecting...');
+      // Clear the form
+      setFormData({
+        first_name: '',
+        last_name: '',
+        email: '',
+        mobile: '',
+        nic: '',
+        password: '',
+        confirmPassword: ''
+      });
+      
+      setSuccessMessage('Registration successful! Redirecting to login...');
+      
+      // Logout immediately after registration (since we want them to login)
+      dispatch(logout());
+      
       setTimeout(() => {
         onSuccess?.();
       }, 1500);

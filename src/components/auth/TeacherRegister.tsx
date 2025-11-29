@@ -335,3 +335,4 @@ export const TeacherRegister: React.FC<TeacherRegisterProps> = ({
   );
 };
 
+
