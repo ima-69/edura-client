@@ -1,7 +1,11 @@
 import React from 'react';
 import { Button } from '../ui';
 
-export const Hero: React.FC = () => {
+interface HeroProps {
+  onGetStarted?: () => void;
+}
+
+export const Hero: React.FC<HeroProps> = ({ onGetStarted }) => {
   return (
     <section className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-20 pb-32 overflow-hidden">
       {/* Decorative elements */}
@@ -28,7 +32,7 @@ export const Hero: React.FC = () => {
               Join thousands of learners worldwide. Access expert-led courses, earn certificates, and advance your career with our comprehensive learning platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button variant="primary" size="lg" className="shadow-lg">
+              <Button variant="primary" size="lg" className="shadow-lg" onClick={onGetStarted}>
                 Start Learning Free
               </Button>
               <Button variant="outline" size="lg">

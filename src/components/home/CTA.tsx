@@ -1,7 +1,11 @@
 import React from 'react';
 import { Button } from '../ui';
 
-export const CTA: React.FC = () => {
+interface CTAProps {
+  onGetStarted?: () => void;
+}
+
+export const CTA: React.FC<CTAProps> = ({ onGetStarted }) => {
   return (
     <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,6 +21,7 @@ export const CTA: React.FC = () => {
               variant="primary"
               size="lg"
               className="bg-white text-blue-600 hover:bg-gray-100"
+              onClick={onGetStarted}
             >
               Start Free Trial
             </Button>

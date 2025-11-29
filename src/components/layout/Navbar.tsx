@@ -1,7 +1,11 @@
 import React from 'react';
 import { Button } from '../ui';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  onGetStarted?: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ onGetStarted }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   return (
@@ -39,7 +43,7 @@ export const Navbar: React.FC = () => {
             <Button variant="ghost" size="sm">
               Sign In
             </Button>
-            <Button variant="primary" size="sm">
+            <Button variant="primary" size="sm" onClick={onGetStarted}>
               Get Started
             </Button>
           </div>
@@ -89,7 +93,7 @@ export const Navbar: React.FC = () => {
                 <Button variant="ghost" size="sm">
                   Sign In
                 </Button>
-                <Button variant="primary" size="sm">
+                <Button variant="primary" size="sm" onClick={onGetStarted}>
                   Get Started
                 </Button>
               </div>
