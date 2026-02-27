@@ -73,3 +73,4 @@ export const updateStudentProfile = async (profileData: any) => {
   return response.data.data;
 };
 
+

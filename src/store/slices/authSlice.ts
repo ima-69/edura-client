@@ -1,12 +1,19 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import api from '../../config/api';
 import type { AuthState, RegisterData, LoginData, User, UserRole } from '../../types/user.types';
+import { storageManager } from '../../utils/storage';
+
+// Initialize storage on app load
+storageManager.initializeAuth();
+
+// Get credentials from storage
+const { token, user } = storageManager.getCredentials();
 
 // Initial state
 const initialState: AuthState = {
-  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
-  token: localStorage.getItem('token') || null,
-  isAuthenticated: !!localStorage.getItem('token'),
+  user: user,
+  token: token,
+  isAuthenticated: !!token,
   isLoading: false,
   error: null,
 };
@@ -64,16 +71,19 @@ export const registerAdmin = createAsyncThunk<
 );
 
 export const login = createAsyncThunk<
-  { user: User; token: string },
+  { user: User; token: string; rememberMe: boolean },
   LoginData,
   { rejectValue: string }
 >(
   'auth/login',
   async (data, { rejectWithValue }) => {
     try {
-      const response = await api.post('/auth/login', data);
+      const response = await api.post('/auth/login', {
+        email: data.email,
+        password: data.password,
+      });
       const user = { ...response.data.data };
-      return { user, token: response.data.token };
+      return { user, token: response.data.token, rememberMe: data.rememberMe || false };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
@@ -141,19 +151,21 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       state.error = null;
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      storageManager.clearAuth();
     },
     clearError: (state) => {
       state.error = null;
     },
-    setCredentials: (state, action: PayloadAction<{ user: User; token: string }>) => {
+    setCredentials: (state, action: PayloadAction<{ user: User; token: string; rememberMe?: boolean }>) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.isAuthenticated = true;
       state.error = null;
-      localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('user', JSON.stringify(action.payload.user));
+      storageManager.saveCredentials(
+        action.payload.token, 
+        action.payload.user, 
+        action.payload.rememberMe || false
+      );
     },
   },
   extraReducers: (builder) => {
@@ -168,8 +180,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        storageManager.saveCredentials(action.payload.token, action.payload.user, true);
       })
       .addCase(registerStudent.rejected, (state, action) => {
         state.isLoading = false;
@@ -187,8 +198,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        storageManager.saveCredentials(action.payload.token, action.payload.user, true);
       })
       .addCase(registerTeacher.rejected, (state, action) => {
         state.isLoading = false;
@@ -206,8 +216,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        storageManager.saveCredentials(action.payload.token, action.payload.user, true);
       })
       .addCase(registerAdmin.rejected, (state, action) => {
         state.isLoading = false;
@@ -225,8 +234,11 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        storageManager.saveCredentials(
+          action.payload.token,
+          action.payload.user,
+          action.payload.rememberMe
+        );
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
@@ -244,8 +256,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        storageManager.saveCredentials(action.payload.token, action.payload.user, true);
       })
       .addCase(loginStudent.rejected, (state, action) => {
         state.isLoading = false;
@@ -263,8 +274,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        storageManager.saveCredentials(action.payload.token, action.payload.user, true);
       })
       .addCase(loginTeacher.rejected, (state, action) => {
         state.isLoading = false;
@@ -282,8 +292,7 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        storageManager.saveCredentials(action.payload.token, action.payload.user, true);
       })
       .addCase(loginAdmin.rejected, (state, action) => {
         state.isLoading = false;

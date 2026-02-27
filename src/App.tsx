@@ -14,12 +14,33 @@ import { StudentProfile } from './pages/student/StudentProfile';
 import { AdminProfile } from './pages/admin/AdminProfile';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { setCurrentPage, goBack, type Page } from './store/slices/uiSlice';
+import { setCredentials } from './store/slices/authSlice';
+import { storageManager } from './utils/storage';
 import { useEffect } from 'react';
 
 function App() {
   const dispatch = useAppDispatch();
   const currentPage = useAppSelector((state) => state.ui.currentPage);
   const { isAuthenticated, user: currentUser } = useAppSelector((state) => state.auth);
+
+  // Initialize auth from storage on app load
+  useEffect(() => {
+    console.log('🔐 Initializing authentication from storage...');
+    const { token, user } = storageManager.getCredentials();
+    console.log('📦 Retrieved from storage:', { 
+      hasToken: !!token, 
+      hasUser: !!user,
+      userRole: user?.role,
+      userName: user?.first_name 
+    });
+    
+    if (token && user) {
+      console.log('✅ Setting credentials in Redux');
+      dispatch(setCredentials({ token, user }));
+    } else {
+      console.log('❌ No credentials found in storage');
+    }
+  }, [dispatch]);
 
   // Handle browser back/forward buttons
   useEffect(() => {

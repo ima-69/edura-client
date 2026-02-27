@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCurrentPage } from '../../store/slices/uiSlice';
 import { Card, Button } from '../../components/ui';
+import { CourseManagement } from './CourseManagement';
 
 type TabType = 'overview' | 'courses' | 'students' | 'exams' | 'settings';
 
@@ -149,67 +150,7 @@ const OverviewTab: React.FC = () => {
 
 // Courses Tab Component
 const CoursesTab: React.FC = () => {
-  const [showCreateForm, setShowCreateForm] = useState(false);
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">My Courses</h2>
-        <Button onClick={() => setShowCreateForm(true)} variant="primary">
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Create New Course
-        </Button>
-      </div>
-
-      {showCreateForm ? (
-        <Card className="p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Create New Course</h3>
-          <form className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Course Title</label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Enter course title"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-              <textarea
-                rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Enter course description"
-              />
-            </div>
-            <div className="flex space-x-4">
-              <Button type="submit" variant="primary">Create Course</Button>
-              <Button type="button" variant="ghost" onClick={() => setShowCreateForm(false)}>Cancel</Button>
-            </div>
-          </form>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((course) => (
-            <Card key={course} className="p-6">
-              <div className="aspect-video bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg mb-4"></div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Course Title {course}</h3>
-              <p className="text-sm text-gray-600 mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-              <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                <span>👥 45 students</span>
-                <span>⭐ 4.5</span>
-              </div>
-              <div className="flex space-x-2">
-                <Button size="sm" variant="ghost" className="flex-1">Edit</Button>
-                <Button size="sm" variant="ghost" className="flex-1">View</Button>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+  return <CourseManagement />;
 };
 
 // Students Tab Component
@@ -441,4 +382,5 @@ const SettingsTab: React.FC = () => {
     </div>
   );
 };
+
 
